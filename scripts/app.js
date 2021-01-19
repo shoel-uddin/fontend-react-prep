@@ -1,35 +1,32 @@
-console.log("Hello Sho!");
+async function main() {
+    const button = document.querySelector('[data-new-joke]');
+    button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const joke = await getJoke();
+        renderJoke(joke);
+    })
+}
+main()
 
-function processResponse(response) {
-    return response.json();
+
+
+
+async function getJoke(){
+    const jokePromise = fetch('https://icanhazdadjoke.com', {
+        headers: {
+            accept: 'application/json'
+        }
+    })
+    const response = await jokePromise;
+    const jokeData = await response.json();
+    // console.log(jokeData);
+    // console.log(jokeData.joke);
+    return jokeData.joke;
 }
 
-// Show the joke on th page
-// 1. make the request using fetch()
-fetch('https://icanhazdadjoke.com', {
-    headers: {
-        accept: 'application/json'
-    }
-})
-.then(response => {
-    console.log(response);
-    const theData = response.json();return theData
-})
-.then(data => {
-    console.log(data);
-    return data.joke;
-})
-.then (theJoke => {
-    console.log(theJoke);
-})
-.catch(err => console.log(err))
-// 2. grab the .joke
-// 3. render it to the page
-
-// Alternate to use .catch() is to pass a second callback to .then():
-// fetch('https://icanhazdadjoke.com', {
-//     headers: {
-//         accept: 'application/json'
-//     }
-// })
-// .then(response => response.json(), err => console.log(err))
+async function renderJoke() {
+    const joke = await getJoke();
+    const p = document.createElement('p');
+    p.textContent = joke;
+    document.querySelector('[data-root]').appendChild(p)
+}
